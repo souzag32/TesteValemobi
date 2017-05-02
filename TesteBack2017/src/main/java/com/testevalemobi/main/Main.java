@@ -14,19 +14,22 @@ public class Main {
 	public static void main(String[] args) {
 		EntityManager manager = JPAUtil.getEntityManager();
 		manager.getTransaction().begin();
-		CustomerDao dao = new CustomerDao(manager);
-		
-		List<Customer> customers = dao.customers(new BigDecimal(560), 1500, 2700);
-		manager.close();
-		
-		System.out.println();
-		BigDecimal mediaFinal = new BigDecimal(0);
-		
-		for(Customer c : customers){
-			mediaFinal = mediaFinal.add(c.getValorTotal());
-			System.out.println(c);
+		try{
+			CustomerDao dao = new CustomerDao(manager);
+			
+			List<Customer> customers = dao.customers(new BigDecimal(560), 1500, 2700);
+			
+			System.out.println();
+			BigDecimal mediaFinal = new BigDecimal(0);
+			
+			for(Customer c : customers){
+				mediaFinal = mediaFinal.add(c.getValorTotal());
+				System.out.println(c);
+			}
+			
+			System.out.println("\nMedia Final: "+ mediaFinal.divide(new BigDecimal(customers.size()), 2));
+		} finally{
+			manager.close();
 		}
-		
-		System.out.println("\nMedia Final: "+ mediaFinal.divide(new BigDecimal(customers.size()), 2));
 	}
 }
